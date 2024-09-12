@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade Entry Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+      .star-rating {
+        direction: ltr;
+        display: inline-block;
+      }
+
+      .star-rating input[type='radio'] {
+        display: none;
+      }
+
+      .star-rating label {
+        font-size: 1.4rem;
+        color: #737373;
+        cursor: pointer;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      tr > td:first-child {
+        width: 25%;
+        vertical-align: middle;
+        font-weight: 500;
+      }
+
+      textarea {
+        resize: none;
+        line-height: 1.2 !important;
+      }
+
+      .bg-secondary-subtle {
+        background-color: #d5efec !important;
+      }
+
+      @media (min-width: 576px) {
+        tr > td:first-child {
+          width: 30%;
+        }
+      }
+
+      @media (max-width: 575px) {
+        body {
+          font-size: 12px !important;
+        }
+      }
+
+      @media (min-width: 992px) {
+        tr > td:first-child {
+          width: 25%;
+        }
+
+        .card-body > div {
+          width: 75% !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container py-4">
+      <form>
+        <div class="card text-center">
+          <div class="card-header">
+            <div class="row justify-content-center">
+              <label
+                for="tradeNo"
+                class="col-4 col-sm-3 col-md-2 col-xl-2 text-sm-end text-center col-form-label"
+                >TRADE NO-</label
+              >
+              <div class="col-3 col-sm-3 col-md-2 col-xl-1">
+                <input
+                  type="number"
+                  class="form-control-plaintext"
+                  id="tradeNo"
+                  autocomplete="off"
+                  onchange="onChange('tradeNo');"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="row justify-content-start">
+                  <label
+                    for="stockName"
+                    class="col-3 col-sm-4 col-md-3 col-xl-2 text-sm-end text-start col-form-label"
+                    >STOCK -</label
+                  >
+                  <div class="col col-sm-8 col-md-9">
+                    <input
+                      type="text"
+                      class="form-control-plaintext"
+                      id="stockName"
+                      autocomplete="off"
+                      oninput="this.value = this.value.toUpperCase();"
+                      onchange="onChange('stockName');"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="row justify-content-end">
+                  <label
+                    for="entryDate"
+                    class="col-5 col-sm-6 text-sm-end text-start col-form-label"
+                    >ENTRY DATE -</label
+                  >
+                  <div class="col col-sm-6 col-xl-4">
+                    <input
+                      type="date"
+                      class="form-control-plaintext"
+                      id="entryDate"
+                      autocomplete="off"
+                      onchange="onChange('entryDate');"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="row justify-content-start">
+                  <label
+                    for="entryValue"
+                    class="col-3 col-sm-4 col-md-3 col-xl-2 text-sm-end text-start col-form-label text-primary"
+                    >ENTRY -</label
+                  >
+                  <div class="col col-6">
+                    <input
+                      type="number"
+                      class="form-control-plaintext"
+                      id="entryValue"
+                      autocomplete="off"
+                      oninput="updateDifference();"
+                      onchange="onChange('entryValue');"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="row justify-content-end">
+                  <label
+                    for="stopLossValue"
+                    class="col-4 col-sm-6 col-md-4 text-sm-end text-start col-form-label text-danger"
+                    >STOPLOSS -</label
+                  >
+                  <div class="col col-sm-6 col-xl-4">
+                    <input
+                      type="number"
+                      class="form-control-plaintext"
+                      id="stopLossValue"
+                      autocomplete="off"
+                      oninput="updateDifference();"
+                      onchange="onChange('stopLossValue');"
+                    /><span
+                      id="differenceDisplay"
+                      class="text-danger ms-2"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="row justify-content-start">
+                  <label
+                    for="entryStyle"
+                    class="col-3 col-sm-4 col-md-3 col-xl-2 text-sm-end text-start col-form-label"
+                    >STYLE -</label
+                  >
+                  <div class="col col-sm-6 col-xl-4">
+                    <select
+                      name="style"
+                      id="entryStyle"
+                      class="form-control-plaintext"
+                      onchange="onChange('entryStyle');"
+                    >
+                      <option value="" selected disabled>Choice..</option>
+                      <option value="HIT-SORT">HIT-SORT</option>
+                      <option value="DIT-SORT">DIT-SORT</option>
+                      <option value="WIT-SORT">WIT-SORT</option>
+                      <option value="MIT-SORT">MIT-SORT</option>
+                      <option value="QIT-SORT">QIT-SORT</option>
+                      <hr />
+                      <option value="HIT-LONG">HIT-LONG</option>
+                      <option value="DIT-LONG">DIT-LONG</option>
+                      <option value="WIT-LONG">WIT-LONG</option>
+                      <option value="MIT-LONG">MIT-LONG</option>
+                      <option value="QIT-LONG">QIT-LONG</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="row justify-content-end">
+                  <label
+                    for="entryType"
+                    class="col-5 col-sm-6 text-sm-end text-start col-form-label"
+                    >ENTRY TYPE -</label
+                  >
+                  <div class="col col-sm-6 col-xl-4">
+                    <select
+                      name="entryType"
+                      id="entryType"
+                      class="form-control-plaintext"
+                      onchange="onChange('entryType');"
+                    >
+                      <option value="" selected disabled>Choice..</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row bg-secondary-subtle mt-4">
+              <label class="col-sm-6 col-form-label my-auto"
+                ><span class="text-success">TOP</span>-<span class="text-danger"
+                  >DOWN</span
+                >
+                <span class="text-primary">APPROCH</span> RATING
+              </label>
+              <div class="col-sm-6">
+                <div class="star-rating">
+                  <input
+                    type="radio"
+                    id="star1"
+                    name="rating"
+                    value="1"
+                    onchange="onChange('star1');"
+                  />
+                  <label for="star1" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star2"
+                    name="rating"
+                    value="2"
+                    onchange="onChange('star2');"
+                  />
+                  <label for="star2" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star3"
+                    name="rating"
+                    value="3"
+                    onchange="onChange('star3');"
+                  />
+                  <label for="star3" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star4"
+                    name="rating"
+                    value="4"
+                    onchange="onChange('star4');"
+                  />
+                  <label for="star4" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star5"
+                    name="rating"
+                    value="5"
+                    onchange="onChange('star5');"
+                  />
+                  <label for="star5" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star6"
+                    name="rating"
+                    value="6"
+                    onchange="onChange('star6');"
+                  />
+                  <label for="star6" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star7"
+                    name="rating"
+                    value="7"
+                    onchange="onChange('star7');"
+                  />
+                  <label for="star7" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star8"
+                    name="rating"
+                    value="8"
+                    onchange="onChange('star8');"
+                  />
+                  <label for="star8" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star9"
+                    name="rating"
+                    value="9"
+                    onchange="onChange('star9');"
+                  />
+                  <label for="star9" class="bi bi-star-fill">★</label>
+
+                  <input
+                    type="radio"
+                    id="star10"
+                    name="rating"
+                    value="10"
+                    onchange="onChange('star10');"
+                  />
+                  <label for="star10" class="bi bi-star-fill">★</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="mx-auto">
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th colspan="2">LOCATION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>TIME FRAME</td>
+                    <td>
+                      <select
+                        name="locTimeframe"
+                        id="locTimeframe"
+                        class="form-control-plaintext"
+                        onchange="onChange('locTimeframe');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>FRESSNESS</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locFreNess"
+                          id="locFreNess1"
+                          value="Yes"
+                          onchange="onChange('locFreNess1');"
+                        />
+                        <label class="form-check-label" for="locFreNess1">
+                          Yes
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locFreNess"
+                          id="locFreNess2"
+                          value="No - 1"
+                          onchange="onChange('locFreNess2');"
+                        />
+                        <label class="form-check-label" for="locFreNess2">
+                          No - 1
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locFreNess"
+                          id="locFreNess3"
+                          value="No - 2"
+                          onchange="onChange('locFreNess3');"
+                        />
+                        <label class="form-check-label" for="locFreNess3">
+                          No - 2
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>MARKING</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locMarking"
+                          id="locMarking1"
+                          value="BODY TO WICK"
+                          onchange="onChange('locMarking1');"
+                        />
+                        <label class="form-check-label" for="locMarking1">
+                          BODY TO WICK
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locMarking"
+                          id="locMarking2"
+                          value="WICK TO WICK"
+                          onchange="onChange('locMarking2');"
+                        />
+                        <label class="form-check-label" for="locMarking2">
+                          WICK TO WICK
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>BASE</td>
+                    <td>
+                      <select
+                        name="locBase"
+                        id="locBase"
+                        class="form-control-plaintext"
+                        onchange="onChange('locBase');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>LEGOUT</td>
+                    <td>
+                      <select
+                        name="locLegout"
+                        id="locLegout"
+                        class="form-control-plaintext"
+                        onchange="onChange('locLegout');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>LEGIN</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locLegin"
+                          id="locLegin1"
+                          value="PROPER"
+                          onchange="onChange('locLegin1');"
+                        />
+                        <label class="form-check-label" for="locLegin1">
+                          PROPER
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locLegin"
+                          id="locLegin2"
+                          value="ADJUST"
+                          onchange="onChange('locLegin2');"
+                        />
+                        <label class="form-check-label" for="locLegin2">
+                          ADJUST
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CLOSING</td>
+                    <td>
+                      <select
+                        name="locClosing"
+                        id="locClosing"
+                        class="form-control-plaintext"
+                        onchange="onChange('locClosing');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="AVERAGE">AVERAGE</option>
+                        <option value="NORMAL">NORMAL</option>
+                        <option value="GOOD">GOOD</option>
+                        <option value="BEST">BEST</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>ACHIVMENT</td>
+                    <td>
+                      <select
+                        name="locAchivment"
+                        id="locAchivment"
+                        class="form-control-plaintext"
+                        onchange="onChange('locAchivment');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>SUPPORT</td>
+                    <td>
+                      <select
+                        name="locSupport"
+                        id="locSupport"
+                        class="form-control-plaintext"
+                        onchange="onChange('locSupport');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>OPPOSE</td>
+                    <td>
+                      <select
+                        name="locOppose"
+                        id="locOppose"
+                        class="form-control-plaintext"
+                        onchange="onChange('locOppose');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>EMA 20</td>
+                    <td>
+                      <select
+                        name="locEma"
+                        id="locEma"
+                        class="form-control-plaintext"
+                        onchange="onChange('locEma');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="NO">NO</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CROSSOVER</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locCrossover"
+                          id="locCrossover1"
+                          value="Yes"
+                          onchange="onChange('locCrossover1');"
+                        />
+                        <label class="form-check-label" for="locCrossover1">
+                          Yes
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="locCrossover"
+                          id="locCrossover2"
+                          value="No"
+                          onchange="onChange('locCrossover2');"
+                        />
+                        <label class="form-check-label" for="locCrossover2">
+                          No
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th colspan="2">TREND</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>MA 50</td>
+                    <td>
+                      <select
+                        name="treMa"
+                        id="treMa"
+                        class="form-control-plaintext"
+                        onchange="onChange('treMa');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="UP">UP</option>
+                        <option value="DOWN">DOWN</option>
+                        <option value="SIDEWAYS">SIDEWAYS</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>ADVANCE</td>
+                    <td>
+                      <select
+                        name="treAdvace"
+                        id="treAdvace"
+                        class="form-control-plaintext"
+                        onchange="onChange('treAdvace');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="UP">UP</option>
+                        <option value="DOWN">DOWN</option>
+                        <option value="SIDEWAYS">SIDEWAYS</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th colspan="2">EXICUTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>TIME FRAME</td>
+                    <td>
+                      <select
+                        name="exiTimeframe"
+                        id="exiTimeframe"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiTimeframe');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="05 MIN">05 MIN</option>
+                        <option value="10 MIN">10 MIN</option>
+                        <option value="15 MIN">15 MIN</option>
+                        <option value="30 MIN">30 MIN</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>FRESSNESS</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiFreNess"
+                          id="exiFreNess1"
+                          value="Yes"
+                          onchange="onChange('exiFreNess1');"
+                        />
+                        <label class="form-check-label" for="exiFreNess1">
+                          Yes
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiFreNess"
+                          id="exiFreNess2"
+                          value="No - 1"
+                          onchange="onChange('exiFreNess2');"
+                        />
+                        <label class="form-check-label" for="exiFreNess2">
+                          No - 1
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiFreNess"
+                          id="exiFreNess3"
+                          value="No - 2"
+                          onchange="onChange('exiFreNess3');"
+                        />
+                        <label class="form-check-label" for="exiFreNess3">
+                          No - 2
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>MARKING</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiMarking"
+                          id="exiMarking1"
+                          value="BODY TO WICK"
+                          onchange="onChange('exiMarking1');"
+                        />
+                        <label class="form-check-label" for="exiMarking1">
+                          BODY TO WICK
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiMarking"
+                          id="exiMarking2"
+                          value="WICK TO WICK"
+                          onchange="onChange('exiMarking2');"
+                        />
+                        <label class="form-check-label" for="exiMarking2">
+                          WICK TO WICK
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>BASE</td>
+                    <td>
+                      <select
+                        name="exiBase"
+                        id="exiBase"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiBase');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>LEGOUT</td>
+                    <td>
+                      <select
+                        name="exiLegout"
+                        id="exiLegout"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiLegout');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>LEGIN</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiLegin"
+                          id="exiLegin1"
+                          value="PROPER"
+                          onchange="onChange('exiLegin1');"
+                        />
+                        <label class="form-check-label" for="exiLegin1">
+                          PROPER
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiLegin"
+                          id="exiLegin2"
+                          value="ADJUST"
+                          onchange="onChange('exiLegin2');"
+                        />
+                        <label class="form-check-label" for="exiLegin2">
+                          ADJUST
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>LEVEL</td>
+                    <td>
+                      <select
+                        name="exiLevel"
+                        id="exiLevel"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiLevel');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="VERY COINCIDE">VERY COINCIDE</option>
+                        <option value="NORMAL COINCIDE">NORMAL COINCIDE</option>
+                        <option value="NON - COINCIDE">NON - COINCIDE</option>
+                        <option value=" VERY NON - COINSIDE">
+                          VERY NON - COINSIDE
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CLOSING</td>
+                    <td>
+                      <select
+                        name="exiClosing"
+                        id="exiClosing"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiClosing');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="AVERAGE">AVERAGE</option>
+                        <option value="NORMAL">NORMAL</option>
+                        <option value="GOOD">GOOD</option>
+                        <option value="BEST">BEST</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>ACHIVMENT</td>
+                    <td>
+                      <select
+                        name="exiAchivment"
+                        id="exiAchivment"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiAchivment');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>SUPPORT</td>
+                    <td>
+                      <select
+                        name="exiSupport"
+                        id="exiSupport"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiSupport');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>OPPOSE</td>
+                    <td>
+                      <select
+                        name="exiOppose"
+                        id="exiOppose"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiOppose');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="HALF YEARLY">HALF YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>EMA 20</td>
+                    <td>
+                      <select
+                        name="exiEma"
+                        id="exiEma"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiEma');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="75 MIN">75 MIN</option>
+                        <option value="125 MIN">125 MIN</option>
+                        <hr />
+                        <option value="DAILY">DAILY</option>
+                        <option value="WEEKLY">WEEKLY</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUTERLY">QUTERLY</option>
+                        <option value="NO">NO</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CROSSOVER</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiCrossover"
+                          id="exiCrossover1"
+                          value="Yes"
+                          onchange="onChange('exiCrossover1');"
+                        />
+                        <label class="form-check-label" for="exiCrossover1">
+                          Yes
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiCrossover"
+                          id="exiCrossover2"
+                          value="No"
+                          onchange="onChange('exiCrossover2');"
+                        />
+                        <label class="form-check-label" for="exiCrossover2">
+                          No
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>PRESSURE</td>
+                    <td>
+                      <select
+                        name="exiPressure"
+                        id="exiPressure"
+                        class="form-control-plaintext"
+                        onchange="onChange('exiPressure');"
+                      >
+                        <option value="" selected disabled>Choice..</option>
+                        <option value="LOW">LOW</option>
+                        <option value="MEDIUM">MEDIUM</option>
+                        <option value="HIGH">HIGH</option>
+                        <option value="VERY HIGH">VERY HIGH</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>SECTOR</td>
+                    <td class="text-start">
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiSector"
+                          id="exiSector1"
+                          value="Yes"
+                          onchange="onChange('exiSector1');"
+                        />
+                        <label class="form-check-label" for="exiSector1">
+                          Yes
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="exiSector"
+                          id="exiSector2"
+                          value="No"
+                          onchange="onChange('exiSector2');"
+                        />
+                        <label class="form-check-label" for="exiSector2">
+                          No
+                        </label>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <label for="detailsNote">-: NOTE :-</label>
+              <textarea
+                name="detailsNote"
+                id="detailsNote"
+                rows="3"
+                class="form-control-plaintext"
+                onchange="onChange('detailsNote');"
+              ></textarea>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="row">
+              <div class="col-4">
+                <label for="traTargetSet" class="text-success"
+                  >TARGET SET</label
+                >
+                <textarea
+                  name="traTargetSet"
+                  id="traTargetSet"
+                  rows="5"
+                  class="form-control-plaintext text-center"
+                  onchange="onChange('traTargetSet');"
+                ></textarea>
+              </div>
+              <div class="col-4">
+                <textarea
+                  name="traBroker"
+                  id="traBroker"
+                  class="form-control-plaintext text-center"
+                  placeholder="BROKER"
+                  onchange="onChange('traBroker');"
+                ></textarea>
+              </div>
+              <div class="col-4">
+                <label for="traTargetGet" class="text-success"
+                  >TARGET SET</label
+                >
+                <textarea
+                  name="traTargetGet"
+                  id="traTargetGet"
+                  rows="5"
+                  class="form-control-plaintext text-center"
+                  onchange="onChange('traTargetGet');"
+                ></textarea>
+              </div>
+              <div class="col-6 col-sm-4 col-md-3 col-xl-2 ms-auto">
+                <input
+                  type="date"
+                  class="form-control-plaintext"
+                  id="exitDate"
+                  autocomplete="off"
+                  onchange="onChange('exitDate');"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="btn btn-success float-end my-4 me-4"
+          type="button"
+          onclick="onSubmit();"
+        >
+          Download PDF
+        </button>
+      </form>
+    </div>
+    <!--  -->
+    <script>
+      const stars = document.querySelectorAll('.star-rating input');
+
+      stars.forEach((star) => {
+        star.addEventListener('change', () => {
+          let rating = parseInt(star.value);
+          let labels = document.querySelectorAll('.star-rating label');
+          labels.forEach((label) => (label.style.color = '#737373'));
+          labels.forEach((label, index) => {
+            if (index < rating) {
+              if (index === 0) {
+                label.style.color = '#8B0000';
+              } else if (index === 1) {
+                label.style.color = '#FF0000';
+              } else if (index === 2) {
+                label.style.color = '#CD5C5C';
+              } else if (index === 3) {
+                label.style.color = '#FA8072';
+              } else if (index === 4) {
+                label.style.color = '#90EE90';
+              } else if (index === 5) {
+                label.style.color = '#98FB98';
+              } else if (index === 6) {
+                label.style.color = '#3CB371';
+              } else if (index === 7) {
+                label.style.color = '#2E8B57';
+              } else if (index === 8) {
+                label.style.color = '#008000';
+              } else if (index === 9) {
+                label.style.color = '#006400';
+              }
+            }
+          });
+        });
+      });
+
+      let tradeFormData = {
+        tradeNo: '',
+        stockName: '',
+        entryDate: '',
+        entryValue: '',
+        stopLossValue: '',
+        entryStyle: '',
+        entryType: '',
+        rating: '',
+        locTimeframe: '',
+        locFreNess: '',
+        locMarking: '',
+        locBase: '',
+        locLegout: '',
+        locLegin: '',
+        locClosing: '',
+        locAchivment: '',
+        locSupport: '',
+        locOppose: '',
+        locEma: '',
+        locCrossover: '',
+        treMa: '',
+        treAdvace: '',
+        exiTimeframe: '',
+        exiFreNess: '',
+        exiMarking: '',
+        exiBase: '',
+        exiLegout: '',
+        exiLegin: '',
+        exiLevel: '',
+        exiClosing: '',
+        exiAchivment: '',
+        exiSupport: '',
+        exiOppose: '',
+        exiEma: '',
+        exiCrossover: '',
+        exiPressure: '',
+        exiSector: '',
+        detailsNote: '',
+        traTargetSet: '',
+        traBroker: '',
+        traTargetGet: '',
+        exitDate: '',
+      };
+      const updateDifference = () => {
+        const entryValue =
+          parseFloat(document.getElementById('entryValue').value) || 0;
+        const stopLossValue =
+          parseFloat(document.getElementById('stopLossValue').value) || 0;
+        const difference = entryValue - stopLossValue;
+
+        document.getElementById(
+          'differenceDisplay'
+        ).textContent = `(${difference.toFixed(2)})`;
+        tradeFormData.stopLossValue = stopLossValue;
+        tradeFormData.difference = difference.toFixed(2);
+      };
+      const onChange = (id) => {
+        let val = document.getElementById(id).value;
+        if (id === 'entryValue' || id === 'stopLossValue') {
+          updateDifference();
+        } else if (
+          id === 'star1' ||
+          id === 'star2' ||
+          id === 'star3' ||
+          id === 'star4' ||
+          id === 'star5' ||
+          id === 'star6' ||
+          id === 'star7' ||
+          id === 'star8' ||
+          id === 'star9' ||
+          id === 'star10'
+        ) {
+          tradeFormData = { ...tradeFormData, rating: val };
+        } else if (
+          id === 'locFreNess1' ||
+          id === 'locFreNess2' ||
+          id === 'locFreNess3'
+        ) {
+          tradeFormData = { ...tradeFormData, locFreNess: val };
+        } else if (id === 'locMarking1' || id === 'locMarking2') {
+          tradeFormData = { ...tradeFormData, locMarking: val };
+        } else if (id === 'locLegin1' || id === 'locLegin2') {
+          tradeFormData = { ...tradeFormData, locLegin: val };
+        } else if (id === 'locCrossover1' || id === 'locCrossover2') {
+          tradeFormData = { ...tradeFormData, locCrossover: val };
+        } else if (
+          id === 'exiFreNess1' ||
+          id === 'exiFreNess2' ||
+          id === 'exiFreNess3'
+        ) {
+          tradeFormData = { ...tradeFormData, exiFreNess: val };
+        } else if (id === 'exiMarking1' || id === 'exiMarking2') {
+          tradeFormData = { ...tradeFormData, exiMarking: val };
+        } else if (id === 'exiLegin1' || id === 'exiLegin2') {
+          tradeFormData = { ...tradeFormData, exiLegin: val };
+        } else if (id === 'exiCrossover1' || id === 'exiCrossover2') {
+          tradeFormData = { ...tradeFormData, exiCrossover: val };
+        } else if (id === 'exiSector1' || id === 'exiSector2') {
+          tradeFormData = { ...tradeFormData, exiSector: val };
+        }
+        tradeFormData = { ...tradeFormData, [id]: val };
+      };
+
+      const onSubmit = () => {
+        const getStarColor = (index, rating) => {
+          if (index < rating) {
+            const colors = [
+              '#f00',
+              '#f66',
+              '#fa0',
+              '#ffb74d',
+              '#ffe57f',
+              '#dcedc8',
+              '#aed581',
+              '#8bc34a',
+              '#689f38',
+              '#388e3c',
+            ];
+            return colors[index] || '#737373';
+          } else {
+            return '#737373';
+          }
+        };
+
+        let ratingHtml = '';
+        let rating = parseInt(tradeFormData.rating) || 0;
+
+        for (let i = 1; i <= 10; i++) {
+          ratingHtml += `
+      <input type="radio" id="pdfStar${i}" name="rating" value="${i}" ${
+            i === rating ? 'checked' : ''
+          } />
+      <label for="pdfStar${i}" style="color: ${getStarColor(
+            i - 1,
+            rating
+          )};">★</label>
+    `;
+        }
+
+        let fileName = tradeFormData.tradeNo
+          ? `${tradeFormData.tradeNo}_Trade_Entry_Form.pdf`
+          : 'Trade_Entry_Form.pdf';
+        let element = document.createElement('div');
+        element.innerHTML = `
+    <style>
+        .star-rating {
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .star-rating input[type='radio'] {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 1rem;
+            color: #737373;
+            cursor: pointer;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        tr>td:first-child {
+            width: 25%;
+            vertical-align: middle;
+            font-weight: 500;
+            text-align:center;
+        }
+        
+        .table-striped>tbody>tr:nth-of-type(odd)>* {
+            color:#000 !important;
+            background-color: rgb(0, 0, 0, 0.05) !important;
+        }
+
+        textarea {
+            resize: none;
+            line-height: 1.2 !important;
+        }
+
+        .bg-secondary-subtle {
+            background-color: #D5EFEc !important;
+        }
+            
+        .container{
+            font-size:10px;
+            padding:30px 0;
+        }
+        .table>:not(caption)>*>* {
+            padding:1px;
+        }
+        .table{
+            border: 1px solid #ddd;
+        }
+
+    </style>
+    <div class="container">
+            <div class="card w-100 m-auto">
+                <div class="card-header">
+                    <div class="row justify-content-center">
+                        <div class="col-2 p-0 text-end">TRADE NO -</div>
+                        <div class="col-1 ps-1">${tradeFormData.tradeNo}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-4">
+                                    STOCK -
+                                    </div>
+                                <div class="col">${tradeFormData.stockName}</div>
+                                </div>
+                            </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col text-end">
+                                    ENTRY DATE -
+                                    </div>
+                                <div class="col-4">${tradeFormData.entryDate}</div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-4 text-success">
+                                    ENTRY -
+                                    </div>
+                                <div class="col">${tradeFormData.entryValue}</div>
+                                </div>
+                            </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col text-end text-danger">
+                                    STOPLOSS -
+                                    </div>
+                                <div class="col-4">${tradeFormData.stopLossValue} <span class="text-danger">(${tradeFormData.difference})</span></div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-4">
+                                    STYLE -
+                                    </div>
+                                <div class="col">${tradeFormData.entryStyle}</div>
+                                </div>
+                            </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col text-end">
+                                    ENTRY TYPE -
+                                    </div>
+                                <div class="col-4">${tradeFormData.entryType}</div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="row bg-secondary-subtle mt-2">
+                        <label class="col-6 col-form-label my-auto text-center"><span class="text-success">TOP</span>-<span
+                                class="text-danger">DOWN</span> <span class="text-primary">APPROCH</span> RATING
+                        </label>
+                        <div class="col-6 text-center">
+                            <div class="star-rating">
+                              ${ratingHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mx-auto w-75">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th colspan="2">LOCATION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>TIME FRAME</td>
+                                    <td>${tradeFormData.locTimeframe}</td>
+                                </tr>
+                                <tr>
+                                    <td>FRESSNESS</td>
+                                    <td>${tradeFormData.locFreNess}</td>
+                                </tr>
+                                <tr>
+                                    <td>MARKING</td>
+                                    <td>${tradeFormData.locMarking}</td>
+                                </tr>
+                                <tr>
+                                    <td>BASE</td>
+                                    <td>${tradeFormData.locBase}</td>
+                                </tr>
+                                <tr>
+                                    <td>LEGOUT</td>
+                                    <td>${tradeFormData.locLegout}</td>
+                                </tr>
+                                <tr>
+                                    <td>LEGIN</td>
+                                    <td>${tradeFormData.locLegin}</td>
+                                </tr>
+                                <tr>
+                                    <td>CLOSING</td>
+                                    <td>${tradeFormData.locClosing}</td>
+                                </tr>
+                                <tr>
+                                    <td>ACHIVMENT</td>
+                                    <td>${tradeFormData.locAchivment}</td>
+                                </tr>
+                                <tr>
+                                    <td>SUPPORT</td>
+                                    <td>${tradeFormData.locSupport}</td>
+                                </tr>
+                                <tr>
+                                    <td>OPPOSE</td>
+                                    <td>${tradeFormData.locOppose}</td>
+                                </tr>
+                                <tr>
+                                    <td>EMA 20</td>
+                                    <td>${tradeFormData.locEma}</td>
+                                </tr>
+                                <tr>
+                                    <td>CROSSOVER</td>
+                                    <td>${tradeFormData.locCrossover}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th colspan="2">TREND</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>MA 50</td>
+                                    <td>${tradeFormData.treMa}</td>
+                                </tr>
+                                <tr>
+                                    <td>ADVANCE</td>
+                                    <td>${tradeFormData.treAdvace}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th colspan="2">EXICUTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>TIME FRAME</td>
+                                    <td>${tradeFormData.exiTimeframe}</td>
+                                </tr>
+                                <tr>
+                                    <td>FRESSNESS</td>
+                                    <td>${tradeFormData.exiFreNess}</td>
+                                </tr>
+                                <tr>
+                                    <td>MARKING</td>
+                                    <td>${tradeFormData.exiMarking}</td>
+                                </tr>
+                                <tr>
+                                    <td>BASE</td>
+                                    <td>${tradeFormData.exiBase}</td>
+                                </tr>
+                                <tr>
+                                    <td>LEGOUT</td>
+                                    <td>${tradeFormData.exiLegout}</td>
+                                </tr>
+                                <tr>
+                                    <td>LEGIN</td>
+                                    <td>${tradeFormData.exiLegin}</td>
+                                </tr>
+                                <tr>
+                                    <td>LEVEL</td>
+                                    <td>${tradeFormData.exiLevel}</td>
+                                </tr>
+                                <tr>
+                                    <td>CLOSING</td>
+                                    <td>${tradeFormData.exiClosing}</td>
+                                </tr>
+                                <tr>
+                                    <td>ACHIVMENT</td>
+                                    <td>${tradeFormData.exiAchivment}</td>
+                                </tr>
+                                <tr>
+                                    <td>SUPPORT</td>
+                                    <td>${tradeFormData.exiSupport}</td>
+                                </tr>
+                                <tr>
+                                    <td>OPPOSE</td>
+                                    <td>${tradeFormData.exiOppose}</td>
+                                </tr>
+                                <tr>
+                                    <td>EMA 20</td>
+                                    <td>${tradeFormData.exiEma}</td>
+                                </tr>
+                                <tr>
+                                    <td>CROSSOVER</td>
+                                    <td>${tradeFormData.exiCrossover}</td>
+                                </tr>
+                                <tr>
+                                    <td>PRESSURE</td>
+                                    <td>${tradeFormData.exiPressure}</td>
+                                </tr>
+                                <tr>
+                                    <td>SECTOR</td>
+                                    <td>${tradeFormData.exiSector}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <label>-: NOTE :-</label>
+                        <div class="form-control-plaintext">${tradeFormData.detailsNote}</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <label class="text-success">TARGET SET</label>
+                            <div class="form-control-plaintext text-center">${tradeFormData.traTargetSet}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-control-plaintext text-center">${tradeFormData.traBroker}</div>
+                        </div>
+                        <div class="col-4  text-center">
+                            <label class="text-success">TARGET GET</label>
+                            <div class="form-control-plaintext text-center">${tradeFormData.traTargetGet}</div>
+                        </div>
+                        <div class="col-4 ms-auto">
+                            <label class="text-success">EXIT DATE -</label>
+                            ${tradeFormData.exitDate}
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+            `;
+
+        const options = {
+          margin: 0,
+          image: { type: 'png', quality: 1 },
+          html2canvas: { scale: 2, dpi: 400 },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        // Use html2pdf to convert the element to PDF and save it
+        html2pdf()
+          .from(element)
+          .set(options)
+          .toPdf()
+          .get('pdf')
+          .then(function (pdf) {
+            // Set the filename and save the PDF
+            pdf.save(fileName);
+          });
+      };
+    </script>
+  </body>
+</html>
