@@ -57,6 +57,14 @@
         body {
           font-size: 12px !important;
         }
+        .card-footer .row{
+          flex-direction: column;
+          padding-left: 8px;
+          display: grid;
+        }
+        .card-footer .row div{
+          padding-bottom: 5px;
+        }
       }
 
       @media (min-width: 992px) {
@@ -131,7 +139,7 @@
                 </div>
               </div>
             </div>
-            <div class="row">
+             <div class="row">
               <div class="col-sm-6">
                 <div class="row justify-content-start">
                   <label
@@ -1080,13 +1088,29 @@
                 <label for="traTargetSet" class="text-success"
                   >TARGET SET</label
                 >
-                <textarea
+                <input
+                  type="number"
                   name="traTargetSet"
                   id="traTargetSet"
-                  rows="5"
                   class="form-control-plaintext text-center"
+                  oninput="updateDifference()"
                   onchange="onChange('traTargetSet');"
-                ></textarea>
+                />
+                <span
+                id="differenceDisplay2"
+                class="text-danger ms-2"
+                ></span>
+                <br>
+                <label for="traTargetSet" class="text-success"
+                  >TARGET SET 2</label
+                >
+                <input
+                  type="number"
+                  name="traTargetSet2"
+                  id="traTargetSet2"
+                  class="form-control-plaintext text-center"
+                  onchange="onChange('traTargetSet2');"
+                />
               </div>
               <div class="col-4">
                 <textarea
@@ -1099,15 +1123,15 @@
               </div>
               <div class="col-4">
                 <label for="traTargetGet" class="text-success"
-                  >TARGET SET</label
+                  >TARGET GET</label
                 >
-                <textarea
+                <input
+                  type="number"
                   name="traTargetGet"
                   id="traTargetGet"
-                  rows="5"
                   class="form-control-plaintext text-center"
                   onchange="onChange('traTargetGet');"
-                ></textarea>
+                />
               </div>
               <div class="col-6 col-sm-4 col-md-3 col-xl-2 ms-auto">
                 <input
@@ -1150,22 +1174,22 @@
               } else if (index === 3) {
                 label.style.color = '#FA8072';
               } else if (index === 4) {
-                label.style.color = '#90EE90';
+                label.style.color = '#52be80';
               } else if (index === 5) {
-                label.style.color = '#98FB98';
+                label.style.color = '#27ae60';
               } else if (index === 6) {
-                label.style.color = '#3CB371';
+                label.style.color = '#229954';
               } else if (index === 7) {
-                label.style.color = '#2E8B57';
+                label.style.color = '#1e8449';
               } else if (index === 8) {
-                label.style.color = '#008000';
+                label.style.color = '#196f3d';
               } else if (index === 9) {
-                label.style.color = '#006400';
+                label.style.color = '#145a32';
               }
             }
           });
         });
-      });
+      }); 
 
       let tradeFormData = {
         tradeNo: '',
@@ -1207,6 +1231,7 @@
         exiSector: '',
         detailsNote: '',
         traTargetSet: '',
+        traTargetSet2: '',
         traBroker: '',
         traTargetGet: '',
         exitDate: '',
@@ -1217,12 +1242,23 @@
         const stopLossValue =
           parseFloat(document.getElementById('stopLossValue').value) || 0;
         const difference = entryValue - stopLossValue;
+        const diff = difference * 2;
+        const tset = entryValue + diff;
 
         document.getElementById(
           'differenceDisplay'
         ).textContent = `(${difference.toFixed(2)})`;
+        document.getElementById(
+          'differenceDisplay2'
+        ).textContent = `(${diff.toFixed(2)})`;
+        document.getElementById(
+          'traTargetSet'
+        ).value =  tset.toFixed(2);
+
         tradeFormData.stopLossValue = stopLossValue;
         tradeFormData.difference = difference.toFixed(2);
+        tradeFormData.traTargetSet = tset.toFixed(2);
+        tradeFormData.diff = diff.toFixed(2);
       };
       const onChange = (id) => {
         let val = document.getElementById(id).value;
@@ -1275,16 +1311,16 @@
         const getStarColor = (index, rating) => {
           if (index < rating) {
             const colors = [
-              '#f00',
-              '#f66',
-              '#fa0',
-              '#ffb74d',
-              '#ffe57f',
-              '#dcedc8',
-              '#aed581',
-              '#8bc34a',
-              '#689f38',
-              '#388e3c',
+              '#8B0000',
+              '#FF0000',
+              '#CD5C5C',
+              '#FA8072',
+              '#52be80',
+              '#27ae60',
+              '#229954',
+              '#1e8449',
+              '#196f3d',
+              '#145a32',
             ];
             return colors[index] || '#737373';
           } else {
@@ -1592,7 +1628,9 @@
                     <div class="row">
                         <div class="col-4 text-center">
                             <label class="text-success">TARGET SET</label>
-                            <div class="form-control-plaintext text-center">${tradeFormData.traTargetSet}</div>
+                            <div class="form-control-plaintext text-center">${tradeFormData.traTargetSet}<span class="text-danger">(${tradeFormData.difference})</span></div>
+                            <label class="text-success">TARGET SET2</label>
+                            <div class="form-control-plaintext text-center">${tradeFormData.traTargetSet2}</div>
                         </div>
                         <div class="col-4">
                             <div class="form-control-plaintext text-center">${tradeFormData.traBroker}</div>
