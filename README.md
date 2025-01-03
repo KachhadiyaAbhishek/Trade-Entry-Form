@@ -9,3 +9,7 @@ This project is a **Trade Entry Form** built using **HTML, Bootstrap, CSS**, and
 - **Dynamic Updates**:
   - Automatically calculates the difference between Entry and Stoploss values.
   - Updates input values and ratings on user interaction.
+
+## Dependencies
+- **Bootstrap**: For styling and responsive grid system.
+- **JavaScript**: For handling input changes and dynamic updates.
